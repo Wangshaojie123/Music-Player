@@ -168,9 +168,9 @@ public class MusicPlayerFragment extends BaseFragment implements MusicPlayerCont
     public void onShowlLyricAction(View view){
         if(lrcView.getVisibility() == View.VISIBLE) {
             imageViewAlbum.setVisibility(View.VISIBLE);
-            lrcView.setVisibility(View.GONE);
+                lrcView.setVisibility(View.INVISIBLE);
         }else{
-            imageViewAlbum.setVisibility(View.GONE);
+            imageViewAlbum.setVisibility(View.INVISIBLE);
             lrcView.setVisibility(View.VISIBLE);
         }
     }
@@ -181,8 +181,10 @@ public class MusicPlayerFragment extends BaseFragment implements MusicPlayerCont
 
         if (mPlayer.isPlaying()) {
             mPlayer.pause();
+            lrcView.pauseLrc();
         } else {
             mPlayer.play();
+            lrcView.playLrc();
         }
     }
 
@@ -392,11 +394,11 @@ public class MusicPlayerFragment extends BaseFragment implements MusicPlayerCont
         // Step 4: Keep these things updated
         // - Album rotation
         // - Progress(textViewProgress & seekBarProgress)
+        lrcView.init(song.getDisplayName());
         Bitmap bitmap = AlbumUtils.parseAlbum(song);
         if (bitmap == null) {
             imageViewAlbum.setImageResource(R.drawable.default_record_album);
         } else {
-            lrcView.init(song.getDisplayName());
             imageViewAlbum.setImageBitmap(AlbumUtils.getCroppedBitmap(bitmap));
         }
         imageViewAlbum.pauseRotateAnimation();

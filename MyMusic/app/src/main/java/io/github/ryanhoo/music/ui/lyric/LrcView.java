@@ -28,17 +28,17 @@ public class LrcView extends AppCompatTextView {
     private List<Lyrc> lyrcList;
     private int current = 0;
     // 行的间距
-    private int lineSpacing = 30;
+    private int lineSpacing = 65;
 
     // 当前正在绘制的行
     private Paint currentPaint;
-    private int currentColor = Color.GREEN;
-    private int currentSize = 18;
+    private int currentColor = Color.RED;
+    private int currentSize = 58;
     private Typeface currentTypeface = Typeface.DEFAULT_BOLD;
 
     private Paint ortherPaint;
     private int ortherColor = Color.BLACK;
-    private int ortherSize = 15;
+    private int ortherSize = 55;
     private Typeface ortherTypeface = Typeface.SERIF;
 
     private Handler handler = new Handler() {
@@ -56,13 +56,15 @@ public class LrcView extends AppCompatTextView {
         super(context, attrs);
 
         init("");
-
     }
 
     public void init(String lycname){
-        File file = new File(Environment.getExternalStorageDirectory().getPath() + "/"+ lycname + ".lrc");
-
+        File file = new File(Environment.getExternalStorageDirectory().getPath()+ File.separator+ "Music" + File.separator+lycname + ".lrc");
+        System.out.println(lycname);
         if(FileUtils.isLyric(file)) {
+            handler.removeMessages(10);
+            invalidate();
+            current = 0;
             lyrcList = LyrcUtil.readLRC(file);
         }
 
@@ -100,8 +102,10 @@ public class LrcView extends AppCompatTextView {
                         canvas.drawText(lyrc.lrcString, getWidth() / 2, getHeight() / 2 + lineSpacing * (i - current), ortherPaint);
                     }
                     lyrc = lyrcList.get(current);
+
                     handler.sendEmptyMessageDelayed(10, lyrc.sleepTime);
                     current++;
+
                 }
             }
 
@@ -110,5 +114,14 @@ public class LrcView extends AppCompatTextView {
             canvas.drawText("未找到歌词", getWidth() / 2, getHeight() / 2, currentPaint);
         }
         super.onDraw(canvas);
+    }
+
+    public void pauseLrc(){
+        handler.removeMessages(10);
+        current--;
+    }
+
+    public void playLrc(){
+        invalidate();
     }
 }
