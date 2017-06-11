@@ -8,7 +8,7 @@ android {
     buildToolsVersion '25.0.0'
 
     defaultConfig {
-        applicationId 'io.github.ryanhoo.music'
+        applicationId 'com.last.homework.music'
         minSdkVersion 16
         targetSdkVersion 22
         versionCode getVersionCode("$BUILD")

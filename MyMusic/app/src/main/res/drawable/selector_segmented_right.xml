@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:drawable="@drawable/bg_segmented_right_checked" android:state_checked="true"/>
-    <item android:drawable="@drawable/bg_segmented_right_default"/>
+    <!--<item android:drawable="@drawable/bg_segmented_right_checked" android:state_checked="true"/>-->
+    <!--<item android:drawable="@drawable/bg_segmented_right_default"/>-->
+
+    <item android:drawable="@color/mp.theme.dark_blue.colorControlHighlight" android:state_checked="true"/>
+    <item android:drawable="@color/white"/>
 </selector>

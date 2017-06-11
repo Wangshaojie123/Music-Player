@@ -1,0 +1,175 @@
+package com.last.homework.music.ui.local.all;
+
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.PopupMenu;
+import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.Toast;
+
+import com.last.homework.music.R;
+import com.last.homework.music.RxBus;
+import com.last.homework.music.data.model.PlayList;
+import com.last.homework.music.data.model.Song;
+import com.last.homework.music.data.source.AppRepository;
+import com.last.homework.music.event.PlayListUpdatedEvent;
+import com.last.homework.music.event.PlaySongEvent;
+import com.last.homework.music.ui.base.BaseFragment;
+import com.last.homework.music.ui.base.adapter.OnItemClickListener;
+import com.last.homework.music.ui.common.DefaultDividerDecoration;
+import com.last.homework.music.ui.playlist.AddToPlayListDialogFragment;
+import com.last.homework.music.ui.widget.RecyclerViewFastScroller;
+
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+
+public class AllLocalMusicFragment extends BaseFragment implements LocalMusicContract.View,LocalMusicAdapter.ActionCallback{
+
+    @BindView(R.id.recycler_view)
+    RecyclerView recyclerView;
+    @BindView(R.id.fast_scroller)
+    RecyclerViewFastScroller fastScroller;
+    @BindView(R.id.progress_bar)
+    ProgressBar progressBar;
+    @BindView(R.id.text_view_empty)
+    View emptyView;
+
+    LocalMusicAdapter mAdapter;
+    LocalMusicContract.Presenter mPresenter;
+
+    PlayList mPlayList;
+
+    int mDeleteIndex;
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_all_local_music, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this, view);
+
+        mAdapter = new LocalMusicAdapter(getActivity(), null);
+        mAdapter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                Song song = mAdapter.getItem(position);
+                RxBus.getInstance().post(new PlaySongEvent(song));
+            }
+        });
+        mAdapter.setActionCallback(this);
+        recyclerView.setAdapter(mAdapter);
+        recyclerView.addItemDecoration(new DefaultDividerDecoration());
+
+        fastScroller.setRecyclerView(recyclerView);
+
+        new LocalMusicPresenter(AppRepository.getInstance(), this).subscribe();
+    }
+
+    // RxBus Events
+
+    @Override
+    protected Subscription subscribeEvents() {
+        return RxBus.getInstance().toObservable()
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(new Action1<Object>() {
+                    @Override
+                    public void call(Object o) {
+                        if (o instanceof PlayListUpdatedEvent) {
+                            mPresenter.loadLocalMusic();
+                        }
+                    }
+                })
+                .subscribe();
+    }
+
+
+    // Adapter Action Callback
+
+    @Override
+    public void onAction(View actionView, final int position) {
+        final Song song = mAdapter.getItem(position);
+        PopupMenu actionMenu = new PopupMenu(getActivity(), actionView, Gravity.END | Gravity.BOTTOM);
+        actionMenu.inflate(R.menu.music_action);
+        actionMenu.getMenu().findItem(R.id.menu_item_delete).setVisible(false);
+        actionMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.menu_item_add_to_play_list:
+                        new AddToPlayListDialogFragment()
+                                .setCallback(new AddToPlayListDialogFragment.Callback() {
+                                    @Override
+                                    public void onPlayListSelected(PlayList playList) {
+                                        mPresenter.addSongToPlayList(song, playList);
+                                    }
+                                }).show(getFragmentManager().beginTransaction(),"AddToPlayList");
+                        break;
+                }
+                return true;
+            }
+        });
+        actionMenu.show();
+    }
+    // MVP View
+
+    @Override
+    public void showProgress() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideProgress() {
+        progressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void emptyView(boolean visible) {
+        emptyView.setVisibility(visible ? View.VISIBLE : View.GONE);
+        fastScroller.setVisibility(visible ? View.GONE : View.VISIBLE);
+    }
+
+    @Override
+    public void handleError(Throwable error) {
+        Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onLocalMusicLoaded(List<Song> songs) {
+        mAdapter.setData(songs);
+        mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void setPresenter(LocalMusicContract.Presenter presenter) {
+        mPresenter = presenter;
+    }
+
+    @Override
+    public void showLoading() {
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideLoading() {
+        progressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onSongDeleted(Song song) {
+        mAdapter.notifyItemRemoved(mDeleteIndex);
+        mAdapter.updateSummaryText();
+    }
+}

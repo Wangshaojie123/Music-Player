@@ -13,13 +13,13 @@
     <RelativeLayout
         android:id="@+id/lrc_layout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:layout_weight="1"
         >
 
 
 
-        <io.github.ryanhoo.music.ui.widget.ShadowImageView
+        <com.last.homework.music.ui.widget.ShadowImageView
             android:id="@+id/image_view_album"
             android:layout_width="@dimen/mp.music.album.size"
             android:layout_height="@dimen/mp.music.album.size"
@@ -27,7 +27,7 @@
             android:layout_centerInParent="true"
             />
 
-        <io.github.ryanhoo.music.ui.lyric.LrcView
+        <com.last.homework.music.ui.lyric.LyricView
             android:id="@+id/lrc_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

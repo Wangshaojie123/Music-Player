@@ -6,7 +6,6 @@
         <item name="colorPrimary">@color/mp.theme.dark_blue.colorPrimary</item>
         <item name="colorPrimaryDark">@color/mp.theme.dark_blue.colorPrimaryDark</item>
         <item name="colorAccent">@color/mp.theme.dark_blue.colorAccent</item>
-
         <item name="android:textColorPrimary">@color/mp.theme.dark_blue.textColorPrimary</item>
         <item name="android:textColorSecondary">@color/mp.theme.dark_blue.textColorSecondary</item>
 

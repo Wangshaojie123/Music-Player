@@ -20,7 +20,8 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:button="@drawable/selector_main_nav_play_list"
         tools:button="@drawable/ic_main_nav_play_list_selected"
-        tools:checked="true" />
+        tools:checked="true"
+        android:paddingRight="30dp"/>
 
 
     <RadioButton
@@ -30,6 +31,7 @@
         android:button="@drawable/selector_main_nav_music"
         android:background="?attr/selectableItemBackgroundBorderless"
         tools:button="@drawable/ic_main_nav_music"
+        android:paddingRight="30dp"
         />
 
     <RadioButton
@@ -39,6 +41,7 @@
         android:button="@drawable/selector_main_nav_local_files"
         android:background="?attr/selectableItemBackgroundBorderless"
         tools:button="@drawable/ic_main_nav_local_files"
+        android:paddingRight="30dp"
         />
 
     <RadioButton
