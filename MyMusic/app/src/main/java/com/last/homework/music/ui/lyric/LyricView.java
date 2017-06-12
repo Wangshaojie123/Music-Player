@@ -198,7 +198,7 @@ public class LyricView extends View {
             FileInputStream stream = new FileInputStream(saveFile);//  context.openFileInput(file);
 
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(stream,"GB2312"));
+            BufferedReader br = new BufferedReader(new InputStreamReader(stream,"UTF-8"));
             int i = 0;
             Pattern pattern = Pattern.compile("\\d{2}");
             while ((data = br.readLine()) != null) {

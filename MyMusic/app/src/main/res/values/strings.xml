@@ -1,5 +1,5 @@
 <resources>
-    <string name="mp.app.name">Music Player</string>
+    <string name="mp.app.name">My Music</string>
 
     <string name="mp.list.layoutManager.linear">LinearLayoutManager</string>
 

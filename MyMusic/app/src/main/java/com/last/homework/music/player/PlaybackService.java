@@ -252,13 +252,14 @@ public class PlaybackService extends Service implements IPlayback, IPlayback.Cal
 
     private void updateRemoteViews(RemoteViews remoteView) {
         Song currentSong = mPlayer.getPlayingSong();
+        Bitmap album = null;
         if (currentSong != null) {
             remoteView.setTextViewText(R.id.text_view_name, currentSong.getDisplayName());
             remoteView.setTextViewText(R.id.text_view_artist, currentSong.getArtist());
+            album = AlbumUtils.parseAlbum(currentSong);
         }
         remoteView.setImageViewResource(R.id.image_view_play_toggle, isPlaying()
                 ? R.drawable.ic_remote_view_pause : R.drawable.ic_remote_view_play);
-        Bitmap album = AlbumUtils.parseAlbum(getPlayingSong());
         if (album == null) {
             remoteView.setImageViewResource(R.id.image_view_album, R.mipmap.ic_launcher);
         } else {
